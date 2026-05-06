@@ -1,0 +1,99 @@
+# SafeEnv: Secure Secret Key Sharing for Teams
+
+**SafeEnv** is a high-performance CLI tool designed to encrypt and share secret keys (like `.env` files) among development teams securely. Built with **Go** and powered by **Supabase**, it ensures that sensitive credentials never reside in plain text on unverified machines.
+
+---
+
+## 🛠️ Prerequisites
+
+Before installing **SafeEnv**, you must have **Go** (Golang) installed on your machine.
+
+### 1. Install Go
+If you do not have Go installed, follow the steps for your operating system:
+
+*   **Windows / macOS**: Download the installer from the [Official Go Downloads page](https://go.dev/dl/) and follow the prompts.
+*   **Linux (Ubuntu/Debian)**:
+    ```bash
+    sudo apt update
+    sudo apt install golang-go
+    ```
+*   **Verify Installation**:
+    Run the following command in your terminal:
+    ```bash
+    go version
+    ```
+    *Ensure you are running version **1.21** or higher.*
+
+---
+
+## 🚀 Getting Started
+
+### 2. Install SafeEnv
+Once Go is ready, install version **v0.1.3** directly from the repository:
+
+```bash
+go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.4
+```
+
+> **Pro-Tip**: Ensure your `$GOPATH/bin` is in your system's PATH to run `safeenv` from any directory.
+
+---
+
+### 3. Backend Setup (Supabase)
+SafeEnv uses Supabase as its secure backend. You will need a Supabase project to host your encrypted data.
+
+1.  Create a new project at [Supabase](https://supabase.com/).
+2.  Navigate to the **SQL Editor** in your Supabase dashboard.
+3.  Copy and run the contents of the `schema.sql` file found in the root of this repository to set up the necessary tables.
+
+---
+
+### 4. Initialization
+Connect your local CLI to your backend:
+```bash
+safeenv init
+```
+You will be prompted to enter your **Supabase Project URL** and **Service Role Key**.
+
+---
+
+## 📖 Usage & Commands
+
+SafeEnv is built to be self-documenting. If you ever get stuck, help is just a flag away.
+
+### Global Help
+To see all available commands and global options, run:
+```bash
+safeenv --help
+```
+
+### Command-Specific Help
+Every command supports the `--help` flag. If you want to know more about a specific action, like how to register or create a team, run:
+```bash
+safeenv register --help
+safeenv create-team --help
+```
+
+### Common Flow
+*   **Register**: `safeenv register` — Generates your cryptographic identity.
+*   **Create Team**: `safeenv create-team "Name"` — Sets up a new secure project.
+*   **Invite**: `safeenv invite --team "Name" --user "username"` — Generates a secure OTP for collaborators.
+
+---
+
+## 🛡️ Security Architecture
+*   **Zero-Knowledge**: Your master private key is encrypted locally before ever leaving your machine.
+*   **End-to-End Encryption**: Secrets are stored in "envelopes," accessible only to authorized team members.
+*   **Service-Level Access**: Utilizes the Supabase Service Role for high-speed administrative operations.
+
+---
+
+## 🤝 Contributing
+As a project built in public, contributions are welcome! 
+*   **Founder/CTO**: Mojibola Olalekan Qundus
+*   **Project Path**: `[github.com/Oladev-01/safeenv](https://github.com/Oladev-01/safeenv)`
+
+---
+
+**License**: Distributed under the MIT License.
+```

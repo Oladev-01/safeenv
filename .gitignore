@@ -1,0 +1,10 @@
+# Binaries
+safeenv
+*.exe
+
+# Local Configs (Crucial!)
+.env
+.safeenv/
+
+# Go dependencies
+vendor/

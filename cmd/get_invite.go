@@ -28,6 +28,9 @@ var InviteCmd = &cobra.Command{
 You must be an Admin of the team to run this command.`,
 	Example: "safeenv invite -t your_team",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if apiClient == nil {
+        	return fmt.Errorf("[Auth Error] client not initialized. Please run 'safeenv init' first")
+    	}
 		// 1. Load session for the current user's ID
 		session, err := config.LoadSession()
 		if err != nil {

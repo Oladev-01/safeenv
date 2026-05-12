@@ -27,7 +27,8 @@ var rootCmd = &cobra.Command{
         	return nil
     	}
 
-		apiClient, err := api.NewClient()
+		var err error
+		apiClient, err = api.NewClient()
 		if err != nil {
 			return err
 		}

@@ -49,9 +49,9 @@ func SaveSession(id uuid.UUID, pubKey string) error {
 		return err
 	}
 
-	// 3. Write the file to disk with restricted permissions (0400)
+	// 3. Write the file to disk with restricted permissions (0600)
 	fmt.Printf("Saving session to %s...\n", path)
-	return os.WriteFile(path, data, 0400)
+	return os.WriteFile(path, data, 0600)
 }
 
 // LoadSession is the function that READS the data later

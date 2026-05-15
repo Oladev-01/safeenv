@@ -24,3 +24,9 @@ type AuthLog struct {
 	UserID uuid.UUID `json:"user_id"`
 	Reason string `json:"reason"`
 }
+
+type MemberWithKey struct {
+    ID        string `json:"user_id"`
+    Username  string `json:"username"`
+    PublicKey string `json:"public_key"`
+}

@@ -7,6 +7,7 @@ import (
     "golang.org/x/crypto/nacl/box"
     "golang.org/x/term"
 	"os"
+	"strings"
 	"io"
     "github.com/google/uuid"
     "syscall"
@@ -299,7 +300,7 @@ func (s *SupabaseClient) GetSafe(userID uuid.UUID, teamName string, safeName str
 	userBodyBytes, _ := io.ReadAll(userResp.Body)
 	var users []struct {
 		EncryptedPrivateKey string `json:"encrypted_private_key"`
-		Salt string `json:"salt"`
+		Salt                string `json:"salt"`
 	}
 	if err := json.Unmarshal(userBodyBytes, &users); err != nil || len(users) == 0 {
 		return nil, fmt.Errorf("[Database Error] local user metadata profile record missing")
@@ -313,25 +314,43 @@ func (s *SupabaseClient) GetSafe(userID uuid.UUID, teamName string, safeName str
 		return nil, fmt.Errorf("[Terminal Error] failed to capture passkey input stream: %v", err)
 	}
 
+	sanitizedPassphrase := []byte(strings.TrimRight(string(passphraseBytes), "\r\n"))
+
 	// 6. Decrypt user's local master private key on the fly using passphrase
-	// (Assumes crypto.DecryptPrivateKeyWithPassphrase implements your local storage key derivation wrapper)
-	decryptedPrivateKeyBytes, err := crypto.DecryptPrivateKeyWithPassphrase(users[0].EncryptedPrivateKey,users[0].Salt, passphraseBytes)
+	decryptedPrivateKeyBytes, err := crypto.DecryptPrivateKeyWithPassphrase(users[0].EncryptedPrivateKey, users[0].Salt, sanitizedPassphrase)
 	if err != nil {
 		return nil, fmt.Errorf("[Crypto Error] verification failed: invalid passphrase provided")
+	}
+
+	if len(decryptedPrivateKeyBytes) != 32 {
+		return nil, fmt.Errorf("[Crypto Error] corrupted key state: decrypted private key must be exactly 32 bytes, got %d", len(decryptedPrivateKeyBytes))
 	}
 
 	var userPrivKey [32]byte
 	copy(userPrivKey[:], decryptedPrivateKeyBytes)
 
+	// ❌ NEW FIX: Decode and prepare the user's public key as well!
+	userPubKeyBytes, err := base64.StdEncoding.DecodeString(currentUser.PublicKey)
+	if err != nil || len(userPubKeyBytes) != 32 {
+		return nil, fmt.Errorf("[Crypto Error] local user public key is missing or corrupted")
+	}
+	var userPubKey [32]byte
+	copy(userPubKey[:], userPubKeyBytes)
+
 	// 7. Unwrap the underlying symmetric Team Key using Curve25519/X25519 Anonymous Box open
 	wrappedKeyBytes, err := base64.StdEncoding.DecodeString(targetEnvelope.EncryptedTeamKey)
 	if err != nil {
-		return nil, fmt.Errorf("[Crypto Error] malformed distribution envelope payload")
+		return nil, fmt.Errorf("[Crypto Error] malformed distribution envelope base64 payload: %v", err)
 	}
 
-	teamKey, ok := box.OpenAnonymous(nil, wrappedKeyBytes, nil, &userPrivKey)
+	if len(wrappedKeyBytes) < 56 {
+		return nil, fmt.Errorf("[Crypto Error] distribution envelope data is corrupt (got %d bytes, expected at least 56 bytes)", len(wrappedKeyBytes))
+	}
+
+	// CHANGED: Pass &userPubKey instead of nil as the third argument
+	teamKey, ok := box.OpenAnonymous(nil, wrappedKeyBytes, &userPubKey, &userPrivKey)
 	if !ok {
-		return nil, fmt.Errorf("[Crypto Error] asymmetric box opening failed: key alignment corrupt")
+		return nil, fmt.Errorf("[Crypto Error] asymmetric box opening failed: key alignment corrupt or unauthorized")
 	}
 
 	// 8. Decrypt the raw source variable payload file contents via AES-GCM using decoded teamKey
@@ -340,7 +359,6 @@ func (s *SupabaseClient) GetSafe(userID uuid.UUID, teamName string, safeName str
 		return nil, fmt.Errorf("[Crypto Error] malformed encrypted safe lock payload data stream")
 	}
 
-	// (Assumes crypto.DecryptAESGCM or inline standard library block parsing)
 	plaintext, err := crypto.DecryptAESGCM(encryptedFileBytes, teamKey)
 	if err != nil {
 		return nil, fmt.Errorf("[Crypto Error] symmetrical safe lock decryption cycle failure: %v", err)

@@ -29,10 +29,10 @@ If you do not have Go installed, follow the steps for your operating system:
 ## 🚀 Getting Started
 
 ### 2. Install SafeEnv
-Once Go is ready, install version **v0.1.5** directly from the repository:
+Once Go is ready, install version **v0.1.6** directly from the repository:
 
 ```bash
-go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.5
+go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.6
 ```
 
 > **Pro-Tip**: Ensure your `$GOPATH/bin` is in your system's PATH to run `safeenv` from any directory.

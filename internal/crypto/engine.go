@@ -13,8 +13,7 @@ import (
 	"github.com/Oladev-01/safeenv/internal/model"
 )
 
-
-// CreateNewIdentity generates a keypair and encrypts the private key using the passphrase
+// CreateNewIdentity generates a Curve25519 keypair and wraps the private key using Argon2id + AES-GCM
 func CreateNewIdentity(passphrase string) (*models.Users, error) {
 	// 1. Generate NaCl Box Keypair (Curve25519)
 	pub, priv, err := box.GenerateKey(rand.Reader)
@@ -32,19 +31,20 @@ func CreateNewIdentity(passphrase string) (*models.Users, error) {
 	// Argon2id params: time=1, memory=64MB, threads=4
 	masterKey := argon2.IDKey([]byte(passphrase), salt, 1, 64*1024, 4, 32)
 
-	// 4. Encrypt the Private Key using AES-GCM
+	// 4. Encrypt the Private Key using AES-GCM (packs the 12-byte nonce at the front)
 	encPriv, err := EncryptAESGCM(priv[:], masterKey)
 	if err != nil {
 		return nil, err
 	}
 
 	return &models.Users{
-		PublicKey:           base64.StdEncoding.EncodeToString(pub[:]),
+		PublicKey:     base64.StdEncoding.EncodeToString(pub[:]),
 		EncPrivateKey: encPriv,
-		Salt:                base64.StdEncoding.EncodeToString(salt),
+		Salt:          base64.StdEncoding.EncodeToString(salt),
 	}, nil
 }
 
+// EncryptAESGCM handles generic symmetric file/key encryption (prepends a 12-byte nonce)
 func EncryptAESGCM(plaintext []byte, key []byte) (string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -61,47 +61,49 @@ func EncryptAESGCM(plaintext []byte, key []byte) (string, error) {
 		return "", err
 	}
 
-	// Seal attaches the nonce to the beginning of the ciphertext
+	// Seal attaches the nonce to the beginning of the ciphertext payload string
 	ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
 
+// DecryptPrivateKeyWithPassphrase pulls the salt from the database column and opens the AES-GCM block
+func DecryptPrivateKeyWithPassphrase(encryptedPrivateKeyStr string, saltStr string, passphrase []byte) ([]byte, error) {
+	// 1. Decode the user's specific database salt row
+	salt, err := base64.StdEncoding.DecodeString(saltStr)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode user profile salt: %v", err)
+	}
 
-// DecryptPrivateKeyWithPassphrase reconstructs a user's master X25519 private key 
-// out of its password-protected storage string format using Argon2id and AES-GCM.
-func DecryptPrivateKeyWithPassphrase(encryptedPrivateKeyStr string, passphrase []byte) ([]byte, error) {
-	// 1. Decode the composite storage string out of its envelope representation
+	// 2. Decode the private key data stream envelope
 	encryptedMasterBytes, err := base64.StdEncoding.DecodeString(encryptedPrivateKeyStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode encrypted key base64 data stream: %v", err)
 	}
 
-	// 2. Define standard cryptographic extraction slice boundaries
-	// Payload layout: [ 16 bytes Salt ] [ 12 bytes Nonce ] [ Encrypted Data Payload... ]
-	if len(encryptedMasterBytes) < 16+12+aes.BlockSize {
+	// 3. Extract the 12-byte nonce prepended by your EncryptAESGCM function
+	nonceSize := 12
+	if len(encryptedMasterBytes) < nonceSize+16 { // Nonce + min GCM auth tag
 		return nil, errors.New("encrypted private key payload stream corrupt or truncated")
 	}
 
-	salt := encryptedMasterBytes[0:16]
-	nonce := encryptedMasterBytes[16:28]
-	ciphertext := encryptedMasterBytes[28:]
+	nonce := encryptedMasterBytes[:nonceSize]
+	ciphertext := encryptedMasterBytes[nonceSize:]
 
-	// 3. Derive the exact 32-byte symmetrical decryption key using Argon2id
-	// These parameters mirror standard secure setup configurations (Memory: 64MB, Iterations: 3, Threads: 2)
-	derivedKey := argon2.IDKey(passphrase, salt, 3, 64*1024, 2, 32)
+	// 4. Derive the exact identical key using matching registration parameters (time=1, threads=4)
+	derivedKey := argon2.IDKey(passphrase, salt, 1, 64*1024, 4, 32)
 
-	// 4. Initialize the AES block cipher and open the GCM authentication barrier
+	// 5. Initialize the standard block decryptor
 	block, err := aes.NewCipher(derivedKey)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build internal block validation engine: %v", err)
+		return nil, err
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		return nil, fmt.Errorf("failed to mount authentication mode container: %v", err)
+		return nil, err
 	}
 
-	// 5. Unpack cleartext private key contents
+	// 6. Open the envelope and return the raw 32-byte private key bytes
 	decryptedKey, err := aesGCM.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return nil, errors.New("authentication verification failed: invalid passphrase or data damage detected")

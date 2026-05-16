@@ -299,6 +299,7 @@ func (s *SupabaseClient) GetSafe(userID uuid.UUID, teamName string, safeName str
 	userBodyBytes, _ := io.ReadAll(userResp.Body)
 	var users []struct {
 		EncryptedPrivateKey string `json:"encrypted_private_key"`
+		Salt string `json:"salt"`
 	}
 	if err := json.Unmarshal(userBodyBytes, &users); err != nil || len(users) == 0 {
 		return nil, fmt.Errorf("[Database Error] local user metadata profile record missing")
@@ -314,7 +315,7 @@ func (s *SupabaseClient) GetSafe(userID uuid.UUID, teamName string, safeName str
 
 	// 6. Decrypt user's local master private key on the fly using passphrase
 	// (Assumes crypto.DecryptPrivateKeyWithPassphrase implements your local storage key derivation wrapper)
-	decryptedPrivateKeyBytes, err := crypto.DecryptPrivateKeyWithPassphrase(users[0].EncryptedPrivateKey, passphraseBytes)
+	decryptedPrivateKeyBytes, err := crypto.DecryptPrivateKeyWithPassphrase(users[0].EncryptedPrivateKey,users[0].Salt, passphraseBytes)
 	if err != nil {
 		return nil, fmt.Errorf("[Crypto Error] verification failed: invalid passphrase provided")
 	}

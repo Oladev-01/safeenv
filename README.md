@@ -13,7 +13,7 @@ Before installing **SafeEnv**, you must have **Go** (Golang) installed on your m
 ### 1. Install Go
 If you do not have Go installed, follow the steps for your operating system:
 
-*   **Windows / macOS**: Download the installer from the [Official Go Downloads page](https://go.dev/dl/) and follow the prompts.
+*   **Windows / macOS**: Download the installer from the [Official Go Downloads page](https://safeenv-doc.vercel.app/) and follow the prompts.
 *   **Linux (Ubuntu/Debian)**:
     ```bash
     sudo apt update
@@ -33,10 +33,10 @@ go version
 ## 🚀 Getting Started
 
 ### 2. Install SafeEnv
-Once Go is ready, install version **v0.1.8** directly from the repository:
+Once Go is ready, install version **v0.1.9** directly from the repository:
 
 ```bash
-go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8
+go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.9
 ```
 
 > **Pro-Tip**: Ensure your `$GOPATH/bin` is in your system's PATH to run `safeenv` from any directory.

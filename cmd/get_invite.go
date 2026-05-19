@@ -18,7 +18,7 @@ func init() {
 	InviteCmd.MarkFlagRequired("team")
 
 	// 3. Attach to root
-	rootCmd.AddCommand(InviteCmd)
+	teamCmd.AddCommand(InviteCmd)
 }
 
 var InviteCmd = &cobra.Command{
@@ -26,7 +26,7 @@ var InviteCmd = &cobra.Command{
 	Short: "Generate a one-time invite code for a team",
 	Long:  `Generates a secure, 1-hour valid OTP that allows another user to join your team. 
 You must be an Admin of the team to run this command.`,
-	Example: "safeenv invite -t your_team",
+	Example: "safeenv team invite -t your_team",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if apiClient == nil {
         	return fmt.Errorf("[Auth Error] client not initialized. Please run 'safeenv init' first")

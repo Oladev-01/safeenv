@@ -1,32 +1,5 @@
-```
-
-### Common Flow
-*   **Register**: `safeenv register` — Generates your cryptographic identity.
-*   **Create Team**: `safeenv team create -t "Name" -u "username"` — Sets up a new secure project.
-*   **Invite**: `safeenv invite --team "Name"` — Generates a secure OTP code for collaborators valid for 1 hour.
-*   **Join Team**: `safeenv team join -t "Name" -u "username" -c "123456"` — Enrolls into a team workspace using an active invite code.
-*   **Push Secret**: `safeenv safe push .env --team "Name" --all` — Encrypts and distributes a configuration file.
-*   **Pull Secret**: `safeenv safe pull .env --team "Name" -o .env` — Fetches and decrypts a targeted configuration safe snapshot.
-
----
-
-## 🛡️ Security Architecture
-*   **Zero-Knowledge**: Your master private key is encrypted locally before ever leaving your machine.
-*   **End-to-End Encryption**: Secrets are stored in "envelopes," accessible only to authorized team members.
-*   **Service-Level Access**: Utilizes the Supabase Service Role for high-speed administrative operations.
-
----
-
-## 🤝 Contributing & Support
-As a project built in public, contributions are welcome! 
-
-*   **Founder/CTO**: Mojibola Olalekan Qundus
-*   **Project Path**: [github.com/Oladev-01/safeenv](https://github.com/Oladev-01/safeenv)
-*   **Contact / Support Email**: For inquiries, security disclosures, or support, reach out directly at **[lekanmojibola@gmail.com](mailto:lekanmojibola@gmail.com)**.
-
----
-
-**License**:# SafeEnv: Secure Secret Key Sharing for Teams
+```markdown
+# SafeEnv: Secure Secret Key Sharing for Teams
 
 **SafeEnv** is a high-performance CLI tool designed to encrypt and share secret keys (like `.env` files) among development teams securely. Built with **Go** and powered by **Supabase**, it ensures that sensitive credentials never reside in plain text on unverified machines.
 
@@ -46,12 +19,21 @@ If you do not have Go installed, follow the steps for your operating system:
     ```bash
     sudo apt update
     sudo apt install golang-go
-    ```
-*   **Verify Installation**:
-    Run the following command in your terminal:
-    ```bash
-    go version
-    ```
+    
+
+```
+
+* **Verify Installation**:
+Run the following command in your terminal:
+```bash
+go version
+
+
+```
+
+
+
+```
     *Ensure you are running version **1.21** or higher.*
 
 ---
@@ -60,6 +42,7 @@ If you do not have Go installed, follow the steps for your operating system:
 
 ### 2. Install SafeEnv
 Once Go is ready, install version **v0.1.8** directly from the repository:
+
 ```bash
 go install [github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8](https://github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8)
 
@@ -112,17 +95,18 @@ Every command supports the `--help` flag. If you want to know more about a speci
 ```bash
 safeenv register --help
 safeenv team create --help
+safeenv safe push --help
 
 ```
 
 ### Common Flow
 
 * **Register**: `safeenv register` — Generates your cryptographic identity.
-* **Create Team**: `safeenv team create -t "Name" -u "username"` — Sets up a new secure project.
-* **Invite**: `safeenv invite --team "Name"` — Generates a secure OTP code for collaborators valid for 1 hour.
-* **Join Team**: `safeenv team join -t "Name" -u "username" -c "123456"` — Enrolls into a team workspace using an active invite code.
-* **Push Secret**: `safeenv safe push .env --team "Name" --all` — Encrypts and distributes a configuration file.
-* **Pull Secret**: `safeenv safe pull .env --team "Name" -o .env` — Fetches and decrypts a targeted configuration safe snapshot.
+* **Create Team**: `safeenv team create -t "team_name" -u "username"` — Sets up a new secure project workspace and assigns you as Admin.
+* **Invite**: `safeenv team invite -t "team_name"` — Generates a secure, 1-hour valid OTP code for collaborators.
+* **Join Team**: `safeenv team join -t "team_name" -u "username" -c "code"` — Allows a collaborator to join an existing team using a valid invite code.
+* **Push Secret**: `safeenv safe push .env -t "team_name" --all` — Encrypts and distributes a local secret file to team members.
+* **Pull Secret**: `safeenv safe pull .env -t "team_name" -o .env` — Retrieves, verifies, and decrypts a distributed safe file record.
 
 ---
 
@@ -134,18 +118,16 @@ safeenv team create --help
 
 ---
 
-## 🤝 Contributing & Support
+## 🤝 Contributing
 
 As a project built in public, contributions are welcome!
 
-* **Founder/CTO**: Mojibola Olalekan Qundus
-* **Project Path**: [github.com/Oladev-01/safeenv]()
-* **Contact / Support Email**: For inquiries, security disclosures, or support, reach out directly at **[lekanmojibola@gmail.com]()**.
+* **Founder/CTO**: Mojibola Olalekan Qudus
+* **Project Path**: `[github.com/Oladev-01/safeenv](https://github.com/Oladev-01/safeenv)`
+* **Contact / Support Email**: Reach out directly at **[lekanmojibola@gmail.com](mailto:lekanmojibola@gmail.com)**.
 
 ---
 
 **License**: Distributed under the MIT License.
-
-```
 
 ```

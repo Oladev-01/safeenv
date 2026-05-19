@@ -21,15 +21,15 @@ func init() {
 	CreateTeamCmd.MarkFlagRequired("user")
 
 	// 3. Attach to root
-	rootCmd.AddCommand(CreateTeamCmd)
+	teamCmd.AddCommand(CreateTeamCmd)
 }
 
 var CreateTeamCmd = &cobra.Command{
-	Use:   "create-team",
+	Use:   "create",
 	Short: "Create a new secure team environment",
 	Long:  `Initializes a new team in SafeEnv and sets you as the team Admin. 
 Requires a unique team name and a username for your team profile.`,
-	Example: "safeenv create-team -t your_team -u your_username",
+	Example: "safeenv team create -t your_team -u your_username",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 1. Load local session to get UserID
 		session, err := config.LoadSession()

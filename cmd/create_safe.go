@@ -17,19 +17,19 @@ var (
 
 // safeCreateCmd represents the safe create command
 var safeCreateCmd = &cobra.Command{
-	Use:   "create [file_path]",
+	Use:   "push [file_path]",
 	Short: "Encrypt and distribute a secret file to team members",
 	Long: `Creates a new safe record by encrypting a local file (such as a .env file) 
 using modern Curve25519/X25519 hybrid cryptography. The resulting encrypted 
 blob is pushed to the database, and access keys are securely distributed via envelopes.`,
 	Example: `  # Share a .env file with the entire dev team (safe name defaults to '.env')
-  safeenv create .env --team your-team --all
+  safeenv safe push .env --team your-team --all
 
   # Share a secret file with specific team users and assign a custom safe name
-  safeenv create production.json -t your-team -u user1,user2 -n custom-filename
+  safeenv safe push production.json -t your-team -u user1,user2 -n custom-filename
 
   # Target multiple specific users
-  safeenv create .env --team your-team -u user1 -u user2`,
+  safeenv safe push .env --team your-team -u user1 -u user2`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		filePath := args[0]
@@ -44,7 +44,7 @@ blob is pushed to the database, and access keys are securely distributed via env
 		// 2. Validate session authentication
 		session, err := config.LoadSession()
 		if err != nil {
-			return fmt.Errorf("[Auth Error] no active session found: please login first")
+			return fmt.Errorf("[Auth Error] no active session found: please login first using 'safeenv login'")
 		}
 
 		// 3. Trigger backend cryptographic processing & insertion pipeline
@@ -58,7 +58,7 @@ blob is pushed to the database, and access keys are securely distributed via env
 }
 
 func init() {
-	rootCmd.AddCommand(safeCreateCmd)
+	safeCmd.AddCommand(safeCreateCmd)
 
 	// Define Flags
 	safeCreateCmd.Flags().StringVarP(&teamName, "team", "t", "", "Name of the target team (Required)")
@@ -67,6 +67,5 @@ func init() {
 	
 	safeCreateCmd.Flags().StringVarP(&safeName, "name", "n", "", "Custom tracking name for the safe (Optional: defaults to file name)")
 
-	// Enforce crucial flag constraints
 	safeCreateCmd.MarkFlagRequired("team")
 }

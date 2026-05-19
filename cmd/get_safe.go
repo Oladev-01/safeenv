@@ -15,16 +15,16 @@ var (
 
 // safeGetCmd represents the safe get pulling execution utility
 var safeGetCmd = &cobra.Command{
-	Use:   "get [safe_name]",
+	Use:   "pull [safe_name]",
 	Short: "Retrieve and decrypt a distributed safe file record",
 	Long: `Fetches an encrypted vault envelope from the specified team context.
 It automatically verifies team membership status, prompts for your master passphrase, 
 and reconstructs the decrypted secret environment file directly into an output path.`,
 	Example: `  # Pull the absolute latest release version of a safe file config
-  safeenv get production.env --team your-team --output .env
+  safeenv safe pull production.env --team your-team --output .env
 
   # Request a historic specific version snapshot index configuration target
-  safeenv get production.env -t your-team --version 3 -o decrypted.json`,
+  safeenv safe pull production.env -t your-team --version 3 -o decrypted.json`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		targetSafeName := args[0]
@@ -53,13 +53,13 @@ and reconstructs the decrypted secret environment file directly into an output p
 			return fmt.Errorf("[File Error] failed to write decrypted file output stream: %v", err)
 		}
 
-		fmt.Printf("💾 Decrypted environment contents saved down to: %s\n", destinationPath)
+		fmt.Printf("💾 Saved to:    %s\n", destinationPath)
 		return nil
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(safeGetCmd)
+	safeCmd.AddCommand(safeGetCmd)
 
 	// Command Flags mapping assignments
 	safeGetCmd.Flags().StringVarP(&teamName, "team", "t", "", "Name of the target team (Required)")

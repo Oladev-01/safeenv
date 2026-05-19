@@ -34,7 +34,7 @@ You must be an Admin of the team to run this command.`,
 		// 1. Load session for the current user's ID
 		session, err := config.LoadSession()
 		if err != nil {
-			return fmt.Errorf("[Auth Error] no active session found: please login first")
+			return fmt.Errorf("[Auth Error] no active session found: please login first using 'safeenv login'")
 		}
 
 		// Since session.UserID is already uuid.UUID

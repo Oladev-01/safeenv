@@ -24,19 +24,19 @@ func init() {
 	JoinTeamCmd.MarkFlagRequired("code")
 
 	// 3. Attach to root
-	rootCmd.AddCommand(JoinTeamCmd)
+	teamCmd.AddCommand(JoinTeamCmd)
 }
 
 var JoinTeamCmd = &cobra.Command{
 	Use:   "join",
 	Short: "Join an existing team using an invite code",
 	Long:  `Allows you to become a member of a team. You must provide the exact team name and a valid, non-expired invite code.`,
-	Example: "safeenv join -t your_team -u your_username -c 123456",
+	Example: "safeenv team join -t your_team -u your_username -c 123456",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 1. Load session for the current user's ID
 		session, err := config.LoadSession()
 		if err != nil {
-			return fmt.Errorf("[Auth Error] no active session found: please login first")
+			return fmt.Errorf("[Auth Error] no active session found: please login first using 'safeenv login'")
 		}
 
 		userID := session.UserID

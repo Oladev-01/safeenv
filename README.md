@@ -1,6 +1,36 @@
-# SafeEnv: Secure Secret Key Sharing for Teams
+```
+
+### Common Flow
+*   **Register**: `safeenv register` — Generates your cryptographic identity.
+*   **Create Team**: `safeenv team create -t "Name" -u "username"` — Sets up a new secure project.
+*   **Invite**: `safeenv invite --team "Name"` — Generates a secure OTP code for collaborators valid for 1 hour.
+*   **Join Team**: `safeenv team join -t "Name" -u "username" -c "123456"` — Enrolls into a team workspace using an active invite code.
+*   **Push Secret**: `safeenv safe push .env --team "Name" --all` — Encrypts and distributes a configuration file.
+*   **Pull Secret**: `safeenv safe pull .env --team "Name" -o .env` — Fetches and decrypts a targeted configuration safe snapshot.
+
+---
+
+## 🛡️ Security Architecture
+*   **Zero-Knowledge**: Your master private key is encrypted locally before ever leaving your machine.
+*   **End-to-End Encryption**: Secrets are stored in "envelopes," accessible only to authorized team members.
+*   **Service-Level Access**: Utilizes the Supabase Service Role for high-speed administrative operations.
+
+---
+
+## 🤝 Contributing & Support
+As a project built in public, contributions are welcome! 
+
+*   **Founder/CTO**: Mojibola Olalekan Qundus
+*   **Project Path**: [github.com/Oladev-01/safeenv](https://github.com/Oladev-01/safeenv)
+*   **Contact / Support Email**: For inquiries, security disclosures, or support, reach out directly at **[lekanmojibola@gmail.com](mailto:lekanmojibola@gmail.com)**.
+
+---
+
+**License**:# SafeEnv: Secure Secret Key Sharing for Teams
 
 **SafeEnv** is a high-performance CLI tool designed to encrypt and share secret keys (like `.env` files) among development teams securely. Built with **Go** and powered by **Supabase**, it ensures that sensitive credentials never reside in plain text on unverified machines.
+
+For an extensive, deep-dive breakdown of every single command, configuration flag, and architectural workflow, check out our full [Detailed Documentation Site](https://your-documentation-site-placeholder.com).
 
 ---
 
@@ -29,10 +59,10 @@ If you do not have Go installed, follow the steps for your operating system:
 ## 🚀 Getting Started
 
 ### 2. Install SafeEnv
-Once Go is ready, install version **v0.1.6** directly from the repository:
-
+Once Go is ready, install version **v0.1.8** directly from the repository:
 ```bash
-go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.6
+go install [github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8](https://github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8)
+
 ```
 
 > **Pro-Tip**: Ensure your `$GOPATH/bin` is in your system's PATH to run `safeenv` from any directory.
@@ -40,19 +70,24 @@ go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.6
 ---
 
 ### 3. Backend Setup (Supabase)
+
 SafeEnv uses Supabase as its secure backend. You will need a Supabase project to host your encrypted data.
 
-1.  Create a new project at [Supabase](https://supabase.com/).
-2.  Navigate to the **SQL Editor** in your Supabase dashboard.
-3.  Copy and run the contents of the `schema.sql` file found in the root of this repository to set up the necessary tables.
+1. Create a new project at [Supabase](https://supabase.com/).
+2. Navigate to the **SQL Editor** in your Supabase dashboard.
+3. Copy and run the contents of the `schema.sql` file found in the root of this repository to set up the necessary tables.
 
 ---
 
 ### 4. Initialization
+
 Connect your local CLI to your backend:
+
 ```bash
 safeenv init
+
 ```
+
 You will be prompted to enter your **Supabase Project URL** and **Service Role Key**.
 
 ---
@@ -62,38 +97,55 @@ You will be prompted to enter your **Supabase Project URL** and **Service Role K
 SafeEnv is built to be self-documenting. If you ever get stuck, help is just a flag away.
 
 ### Global Help
+
 To see all available commands and global options, run:
+
 ```bash
 safeenv --help
+
 ```
 
 ### Command-Specific Help
+
 Every command supports the `--help` flag. If you want to know more about a specific action, like how to register or create a team, run:
+
 ```bash
 safeenv register --help
-safeenv create-team --help
+safeenv team create --help
+
 ```
 
 ### Common Flow
-*   **Register**: `safeenv register` — Generates your cryptographic identity.
-*   **Create Team**: `safeenv create-team "Name"` — Sets up a new secure project.
-*   **Invite**: `safeenv invite --team "Name" --user "username"` — Generates a secure OTP for collaborators.
+
+* **Register**: `safeenv register` — Generates your cryptographic identity.
+* **Create Team**: `safeenv team create -t "Name" -u "username"` — Sets up a new secure project.
+* **Invite**: `safeenv invite --team "Name"` — Generates a secure OTP code for collaborators valid for 1 hour.
+* **Join Team**: `safeenv team join -t "Name" -u "username" -c "123456"` — Enrolls into a team workspace using an active invite code.
+* **Push Secret**: `safeenv safe push .env --team "Name" --all` — Encrypts and distributes a configuration file.
+* **Pull Secret**: `safeenv safe pull .env --team "Name" -o .env` — Fetches and decrypts a targeted configuration safe snapshot.
 
 ---
 
 ## 🛡️ Security Architecture
-*   **Zero-Knowledge**: Your master private key is encrypted locally before ever leaving your machine.
-*   **End-to-End Encryption**: Secrets are stored in "envelopes," accessible only to authorized team members.
-*   **Service-Level Access**: Utilizes the Supabase Service Role for high-speed administrative operations.
+
+* **Zero-Knowledge**: Your master private key is encrypted locally before ever leaving your machine.
+* **End-to-End Encryption**: Secrets are stored in "envelopes," accessible only to authorized team members.
+* **Service-Level Access**: Utilizes the Supabase Service Role for high-speed administrative operations.
 
 ---
 
-## 🤝 Contributing
-As a project built in public, contributions are welcome! 
-*   **Founder/CTO**: Mojibola Olalekan Qundus
-*   **Project Path**: `[github.com/Oladev-01/safeenv](https://github.com/Oladev-01/safeenv)`
+## 🤝 Contributing & Support
+
+As a project built in public, contributions are welcome!
+
+* **Founder/CTO**: Mojibola Olalekan Qundus
+* **Project Path**: [github.com/Oladev-01/safeenv]()
+* **Contact / Support Email**: For inquiries, security disclosures, or support, reach out directly at **[lekanmojibola@gmail.com]()**.
 
 ---
 
 **License**: Distributed under the MIT License.
+
+```
+
 ```

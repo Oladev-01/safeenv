@@ -1,4 +1,3 @@
-```markdown
 # SafeEnv: Secure Secret Key Sharing for Teams
 
 **SafeEnv** is a high-performance CLI tool designed to encrypt and share secret keys (like `.env` files) among development teams securely. Built with **Go** and powered by **Supabase**, it ensures that sensitive credentials never reside in plain text on unverified machines.
@@ -130,4 +129,3 @@ As a project built in public, contributions are welcome!
 
 **License**: Distributed under the MIT License.
 
-```

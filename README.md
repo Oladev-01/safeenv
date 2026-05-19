@@ -2,7 +2,7 @@
 
 **SafeEnv** is a high-performance CLI tool designed to encrypt and share secret keys (like `.env` files) among development teams securely. Built with **Go** and powered by **Supabase**, it ensures that sensitive credentials never reside in plain text on unverified machines.
 
-For an extensive, deep-dive breakdown of every single command, configuration flag, and architectural workflow, check out our full [Detailed Documentation Site](https://your-documentation-site-placeholder.com).
+For an extensive, deep-dive breakdown of every single command, configuration flag, and architectural workflow, check out our full [Detailed Documentation Site](https://safeenv-doc.vercel.app/).
 
 ---
 
@@ -13,7 +13,7 @@ Before installing **SafeEnv**, you must have **Go** (Golang) installed on your m
 ### 1. Install Go
 If you do not have Go installed, follow the steps for your operating system:
 
-*   **Windows / macOS**: Download the installer from the [Official Go Downloads page](https://safeenv-doc.vercel.app/) and follow the prompts.
+*   **Windows / macOS**: Download the installer from the [Official Go Downloads page](https://go.dev/dl/) and follow the prompts.
 *   **Linux (Ubuntu/Debian)**:
     ```bash
     sudo apt update

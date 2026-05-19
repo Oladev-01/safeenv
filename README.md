@@ -20,20 +20,13 @@ If you do not have Go installed, follow the steps for your operating system:
     sudo apt install golang-go
     
 
-```
-
 * **Verify Installation**:
 Run the following command in your terminal:
 ```bash
 go version
-
-
 ```
 
-
-
-```
-    *Ensure you are running version **1.21** or higher.*
+> *Ensure you are running version **1.21** or higher.*
 
 ---
 
@@ -43,8 +36,7 @@ go version
 Once Go is ready, install version **v0.1.8** directly from the repository:
 
 ```bash
-go install [github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8](https://github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8)
-
+go install github.com/Oladev-01/safeenv/cmd/safeenv@v0.1.8
 ```
 
 > **Pro-Tip**: Ensure your `$GOPATH/bin` is in your system's PATH to run `safeenv` from any directory.
